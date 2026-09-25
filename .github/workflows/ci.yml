@@ -61,6 +61,7 @@ jobs:
   staging:
     name: Deploy to Staging
     needs: test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Echo Staging Deploy
@@ -84,4 +85,3 @@ jobs:
           echo "5. Membangun aset frontend (pnpm run build)..."
           echo "6. Melakukan caching konfigurasi dan rute Laravel..."
           echo "7. Mengembalikan ke mode aktif (php artisan up)..."
-
