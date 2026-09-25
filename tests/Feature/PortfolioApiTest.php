@@ -11,7 +11,7 @@ class PortfolioApiTest extends TestCase
 
     public function test_can_fetch_portfolios()
     {
-        $this->getJson('/api/portfolios')->assertStatus(500);
+        $this->getJson('/api/portfolios')->assertStatus(200);
     }
 
     public function test_can_create_portfolio()
@@ -19,4 +19,5 @@ class PortfolioApiTest extends TestCase
         $this->postJson('/api/portfolios', ['title' => 'Bespoke Suit'])->assertStatus(201);
     }
 }
+
 
