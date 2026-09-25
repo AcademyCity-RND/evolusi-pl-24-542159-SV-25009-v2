@@ -61,7 +61,7 @@ jobs:
   staging:
     name: Deploy to Staging
     needs: test
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       - name: Echo Staging Deploy
