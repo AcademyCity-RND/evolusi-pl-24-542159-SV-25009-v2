@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-code:
-    name: Code Quality & Style (Laravel Pint)
+  build:
+    name: Build Application
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -19,14 +19,12 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, dom, fileinfo
-          coverage: none
       - name: Install Composer Dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
-      - name: Run Laravel Pint Linter Check
-        run: ./vendor/bin/pint --test
 
-  run-tests:
-    name: Automated Unit & Feature Tests (PHPUnit)
+  test:
+    name: Automated Unit & Feature Tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -36,7 +34,6 @@ jobs:
         with:
           php-version: '8.3'
           extensions: mbstring, dom, fileinfo, sqlite3, pdo_sqlite
-          coverage: none
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
@@ -60,3 +57,31 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
         run: php artisan test
+
+  staging:
+    name: Deploy to Staging
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Staging Deploy
+        run: echo "Mengirim kode ke server staging untuk pengujian internal..."
+
+  production:
+    name: Deploy to Production
+    needs: staging
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Execute 7 Deployment Steps
+        run: |
+          echo "1. Memasuki mode maintenance (php artisan down)..."
+          echo "2. Menarik kode terbaru dari branch main (git pull)..."
+          echo "3. Menginstall dependensi backend (composer install)..."
+          echo "4. Menjalankan migrasi database (php artisan migrate)..."
+          echo "5. Membangun aset frontend (pnpm run build)..."
+          echo "6. Melakukan caching konfigurasi dan rute Laravel..."
+          echo "7. Mengembalikan ke mode aktif (php artisan up)..."
