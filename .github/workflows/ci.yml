@@ -84,3 +84,4 @@ jobs:
           echo "5. Membangun aset frontend (pnpm run build)..."
           echo "6. Melakukan caching konfigurasi dan rute Laravel..."
           echo "7. Mengembalikan ke mode aktif (php artisan up)..."
+
