@@ -5,6 +5,7 @@ on:
     branches: [ '**' ]
   pull_request:
     branches: [ 'main', 'dev' ]
+  workflow_dispatch:
 
 jobs:
   lint-code:
@@ -59,3 +60,4 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
         run: php artisan test
+
