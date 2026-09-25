@@ -6,3 +6,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+use App\Http\Controllers\PortfolioController;
+
+Route::get('/portfolios', [PortfolioController::class, 'index']);
+Route::post('/portfolios', [PortfolioController::class, 'store']);
