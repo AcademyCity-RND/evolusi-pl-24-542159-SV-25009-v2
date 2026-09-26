@@ -12,43 +12,52 @@ Repositori ini dikembangkan secara berkelanjutan (*progressive project*) sebagai
    - Laravel difokuskan murni sebagai penyedia data JSON (API).
    - Menyediakan *endpoint* untuk manajemen katalog layanan, galeri portofolio jahit, dan kontak.
    - Autentikasi berbasis *Token/Cookie* yang dijamin keamanannya menggunakan **Laravel Sanctum**.
-2. **Modern SPA Frontend (Vue 3) - *Upcoming***:
-   - Antarmuka pengguna (*User Interface*) yang sangat reaktif.
-   - Meliputi layar pembuka interaktif, dan galeri dinamis (*Hover-to-reveal* & *Single-lock active*).
+2. **Modern SPA Frontend (Vue 3)**:
+   - Antarmuka pengguna (*User Interface*) yang interaktif menggunakan tema *Dark/Slate Blue*.
+   - Termasuk sinkronisasi data dari backend secara dinamis dan penanganan *error state*.
 3. **Otomatisasi CI/CD & Deployment**:
-   - Menerapkan *Pipeline* terstruktur (Build -> Test -> Staging -> Production) via GitHub Actions.
-   - Proses peluncuran yang aman menggunakan perlindungan *Branch Protection* dan *Environment Reviewers*.
+   - Menerapkan *Pipeline* terstruktur untuk Backend maupun Frontend via **GitHub Actions**.
+   - Proses peluncuran otomatis untuk Frontend ke **Vercel** dengan *artifact passing*.
 
 ---
 
 ## 📌 Status Fitur & Roadmap Evolusi
 
-### ✅ Fase 1 (Tugas 1 - Rilis Saat Ini)
+### ✅ Fase 1 (Tugas 1) — Selesai
 *Fondasi Version Control dan API Backend Dasar*
 - [x] Inisialisasi Repositori & Strategi Percabangan Git (`main`, `dev`, `feature/*`).
 - [x] Setup Backend API Murni (Laravel 11).
-- [x] Fitur CRUD REST API Dasar 1 Tabel (Misal: Manajemen Galeri Portofolio).
+- [x] Fitur CRUD REST API Dasar 1 Tabel (Katalog Portofolio).
 - [x] Pengujian Unit & Fitur Otomatis (PHPUnit).
-- [x] Konfigurasi Dasar GitHub Actions CI (Linting & Testing).
+
+### ✅ Fase 2 (Tugas 2) — Selesai
+*Pipeline CI/CD 4 Tahap untuk Backend*
+- [x] Membuat `.github/workflows/ci.yml`.
+- [x] Rantai tahapan: *Build* ➔ *Test* ➔ *Staging* ➔ *Production*.
+- [x] Menggunakan fitur *Environments* & *Required Reviewers* di GitHub.
+
+### ✅ Fase 3 (Tugas 3 - Rilis Saat Ini) — Selesai
+*Integrasi Frontend Vue 3 & Deployment Vercel*
+- [x] Pembuatan *Frontend* SPA menggunakan Vue 3 & Vite di dalam folder `/frontend`.
+- [x] Koneksi API via CORS agar Vue bisa memanggil rute `/api/portfolios` Laravel.
+- [x] Pipeline CI/CD khusus Frontend (Lint ➔ Test ➔ Build ➔ Deploy).
+- [x] *Deployment* ke Production Vercel menggunakan Vercel CLI via GitHub Actions tanpa melakukan *build* ulang.
 
 ### 🔜 Rencana Fase Mendatang
-- [ ] **Fase 2 (Tugas 2)**: Perluasan Pipeline CI/CD menjadi 4 tahap dengan simulasi *deployment* (*Staging & Production*).
-- [ ] **Fase 3 (Tugas 3)**: Pembuatan *Frontend* Vue 3 di folder `/frontend` (mewujudkan tampilan *Splash Screen* dan Galeri Interaktif), beserta CI khusus *frontend*.
-- [ ] **Fase 4 (Tugas 4)**: *Containerization* menggunakan Docker (`Dockerfile` & `.dockerignore`) untuk mempermudah eksekusi server lintang *platform*.
+- [ ] **Fase 4 (Tugas 4)**: *Containerization* menggunakan Docker (`Dockerfile` & `docker-compose`) untuk menyatukan dan mempermudah eksekusi server lintang *platform*.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Backend**: PHP 8.3+, Laravel 11.x (API Mode)
-- **Frontend**: Vue 3, TailwindCSS, Vite *(Mulai Tugas 3)*
-- **Auth**: Laravel Sanctum (Breeze API)
-- **Database**: MySQL (Laragon Local Environment) & SQLite (In-memory Testing)
-- **Tooling**: Composer, Git, GitHub Actions, Docker *(Mulai Tugas 4)*
+- **Frontend**: Vue 3, Vite, CSS Native (Dark Theme)
+- **Database**: SQLite (In-memory Testing & Development)
+- **Tooling**: Composer, npm, Git, GitHub Actions, Vercel CLI
 
 ---
 
-## 🚀 Panduan Menjalankan API Secara Lokal
+## 🚀 Panduan Menjalankan Secara Lokal
 
 ### 1. Kloning Repositori
 ```bash
@@ -56,45 +65,30 @@ git clone https://github.com/KEPL2026/evolusi-pl-24-542159-SV-25009-v1.git
 cd evolusi-pl-24-542159-SV-25009-v1
 ```
 
-### 2. Instalasi Dependensi Backend
+### 2. Jalankan API Backend (Laravel)
+Buka terminal pertama dan jalankan perintah:
 ```bash
 composer install
-```
-
-### 3. Konfigurasi Lingkungan (.env)
-Salin file konfigurasi lingkungan dan sesuaikan kredensial basis data Anda:
-```bash
 cp .env.example .env
 php artisan key:generate
-```
-
-Pastikan konfigurasi database di `.env` sesuai dengan server lokal Anda:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=evolusi_pl
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 4. Migrasi Database & Pengujian
-Jalankan migrasi tabel ke basis data lokal dan pastikan seluruh *test* berstatus hijau:
-```bash
-php artisan migrate
-php artisan test
-```
-
-### 5. Jalankan Server API Lokal
-```bash
+php artisan migrate --seed
 php artisan serve
 ```
-*(Catatan: Tampilan web interaktif akan ditambahkan pada Tugas 3. Saat ini server hanya merespons panggilan API).*
+*(Server backend akan berjalan di `http://127.0.0.1:8000`)*
+
+### 3. Jalankan Aplikasi Web (Vue 3)
+Buka terminal kedua (biarkan terminal pertama tetap menyala) dan arahkan ke folder `frontend`:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*(Aplikasi web interaktif akan berjalan di `http://localhost:5173`)*
 
 ---
 
 ## 🌿 Struktur Percabangan (Branching Model)
 
-- `main` ➔ Branch rilis stabil (dilindungi Branch Protection).
+- `main` ➔ Branch rilis stabil yang terkoneksi langsung dengan *deployment* Vercel.
 - `dev` ➔ Branch utama integrasi pengembangan.
 - `feature/*` ➔ Branch pengerjaan fitur individual yang digabungkan ke `dev` melalui *Pull Request*.
