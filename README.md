@@ -36,15 +36,21 @@ Repositori ini dikembangkan secara berkelanjutan (*progressive project*) sebagai
 - [x] Rantai tahapan: *Build* ➔ *Test* ➔ *Staging* ➔ *Production*.
 - [x] Menggunakan fitur *Environments* & *Required Reviewers* di GitHub.
 
-### ✅ Fase 3 (Tugas 3 - Rilis Saat Ini) — Selesai
+### ✅ Fase 3 (Tugas 3) — Selesai
 *Integrasi Frontend Vue 3 & Deployment Vercel*
 - [x] Pembuatan *Frontend* SPA menggunakan Vue 3 & Vite di dalam folder `/frontend`.
 - [x] Koneksi API via CORS agar Vue bisa memanggil rute `/api/portfolios` Laravel.
 - [x] Pipeline CI/CD khusus Frontend (Lint ➔ Test ➔ Build ➔ Deploy).
 - [x] *Deployment* ke Production Vercel menggunakan Vercel CLI via GitHub Actions tanpa melakukan *build* ulang.
 
+### ✅ Fase 4 (Tugas 4 - Rilis Saat Ini) — Selesai
+*Pengenalan Docker & Containerization Dasar*
+- [x] Pembuatan file `.dockerignore` untuk mengecualikan *vendor*, *node_modules*, dll.
+- [x] Pembuatan `Dockerfile` *single-stage* untuk membungkus Backend Laravel.
+- [x] Implementasi taktik *Layer Caching* dengan menyalin berkas ekstensi/dependensi `composer` terlebih dahulu sebelum salinan kodingan (*source code*).
+
 ### 🔜 Rencana Fase Mendatang
-- [ ] **Fase 4 (Tugas 4)**: *Containerization* menggunakan Docker (`Dockerfile` & `docker-compose`) untuk menyatukan dan mempermudah eksekusi server lintang *platform*.
+- [ ] **Fase 5 (Tugas 5)**: *Docker Lanjutan* (Refaktor ke *Multi-stage build*, transisi ke *image Alpine/Slim*, konfigurasi *Non-root USER* dan `HEALTHCHECK`, serta publikasi *image* ke GitHub Container Registry / GHCR).
 
 ---
 
@@ -53,20 +59,25 @@ Repositori ini dikembangkan secara berkelanjutan (*progressive project*) sebagai
 - **Backend**: PHP 8.3+, Laravel 11.x (API Mode)
 - **Frontend**: Vue 3, Vite, CSS Native (Dark Theme)
 - **Database**: SQLite (In-memory Testing & Development)
-- **Tooling**: Composer, npm, Git, GitHub Actions, Vercel CLI
+- **Tooling**: Composer, npm, Git, GitHub Actions, Vercel CLI, Docker
 
 ---
 
 ## 🚀 Panduan Menjalankan Secara Lokal
 
-### 1. Kloning Repositori
+### Opsi A: Menjalankan dengan Docker (Direkomendasikan)
+Pastikan Docker Desktop sudah menyala di sistem Anda, lalu jalankan perintah:
 ```bash
-git clone https://github.com/KEPL2026/evolusi-pl-24-542159-SV-25009-v1.git
-cd evolusi-pl-24-542159-SV-25009-v1
-```
+# 1. Bangun image container
+docker build -t evolusi-api:latest .
 
-### 2. Jalankan API Backend (Laravel)
-Buka terminal pertama dan jalankan perintah:
+# 2. Jalankan container di latar belakang
+docker run -d --name laravel-api -p 8000:8000 evolusi-api:latest
+```
+*(API akan berjalan di `http://127.0.0.1:8000`)*
+
+### Opsi B: Menjalankan Manual (Native)
+Jika tidak menggunakan Docker, jalankan skrip berikut di terminal:
 ```bash
 composer install
 cp .env.example .env
@@ -74,10 +85,9 @@ php artisan key:generate
 php artisan migrate --seed
 php artisan serve
 ```
-*(Server backend akan berjalan di `http://127.0.0.1:8000`)*
 
-### 3. Jalankan Aplikasi Web (Vue 3)
-Buka terminal kedua (biarkan terminal pertama tetap menyala) dan arahkan ke folder `frontend`:
+### Menjalankan Aplikasi Web (Vue 3)
+Buka terminal baru dan arahkan ke folder `frontend`:
 ```bash
 cd frontend
 npm install
