@@ -38,6 +38,7 @@ USER www-data
 
 # Siapkan environment dan jalankan optimasi Laravel (Sebagai www-data)
 RUN cp .env.example .env \
+    && touch database/database.sqlite \
     && php artisan key:generate \
     && php artisan optimize:clear
 
@@ -51,3 +52,4 @@ HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
 
 # Perintah menjalankan server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
