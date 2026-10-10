@@ -36,11 +36,11 @@ RUN chown -R www-data:www-data /var/www
 # SYARAT TUGAS 4 & 5: Container tidak boleh berjalan sebagai root!
 USER www-data
 
-# Siapkan environment dan jalankan optimasi Laravel (Sebagai www-data)
+# Siapkan environment dan jalankan migrasi database (Sebagai www-data)
 RUN cp .env.example .env \
     && touch database/database.sqlite \
     && php artisan key:generate \
-    && php artisan optimize:clear
+    && php artisan migrate --force
 
 # Ekspos port
 EXPOSE 8000
