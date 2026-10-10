@@ -43,14 +43,22 @@ Repositori ini dikembangkan secara berkelanjutan (*progressive project*) sebagai
 - [x] Pipeline CI/CD khusus Frontend (Lint ➔ Test ➔ Build ➔ Deploy).
 - [x] *Deployment* ke Production Vercel menggunakan Vercel CLI via GitHub Actions tanpa melakukan *build* ulang.
 
-### ✅ Fase 4 (Tugas 4 - Rilis Saat Ini) — Selesai
+### ✅ Fase 4 (Tugas 4) — Selesai
 *Pengenalan Docker & Containerization Dasar*
 - [x] Pembuatan file `.dockerignore` untuk mengecualikan *vendor*, *node_modules*, dll.
 - [x] Pembuatan `Dockerfile` *single-stage* untuk membungkus Backend Laravel.
 - [x] Implementasi taktik *Layer Caching* dengan menyalin berkas ekstensi/dependensi `composer` terlebih dahulu sebelum salinan kodingan (*source code*).
 
+### ✅ Fase 5 (Tugas 5 - Rilis Saat Ini) — Selesai
+*Docker Lanjutan (Multi-stage, Alpine, Security, & GHCR)*
+- [x] Refaktor Dockerfile menjadi arsitektur *Multi-stage build* untuk memisahkan tahap kompilasi dan tahap eksekusi.
+- [x] Transisi ke *image* `php:8.3-cli-alpine` untuk memangkas ukuran hingga >70%.
+- [x] Konfigurasi *Non-root USER* (`www-data`) untuk mencegah risiko peretasan privilese tinggi.
+- [x] Implementasi indikator `HEALTHCHECK` untuk memantau waktu hidup (*uptime*) dan kesehatan kontainer.
+- [x] Pembuatan alur kerja (*Workflow*) GitHub Actions untuk secara otomatis membangun dan menerbitkan *image* ke **GitHub Container Registry (GHCR)**.
+
 ### 🔜 Rencana Fase Mendatang
-- [ ] **Fase 5 (Tugas 5)**: *Docker Lanjutan* (Refaktor ke *Multi-stage build*, transisi ke *image Alpine/Slim*, konfigurasi *Non-root USER* dan `HEALTHCHECK`, serta publikasi *image* ke GitHub Container Registry / GHCR).
+- [ ] **Fase 6 (Tugas 6)**: *Integrasi Database & Docker Compose* (Menambahkan *service* MySQL/PostgreSQL dan menyatukan jaringan *container* menggunakan `docker-compose.yml`).
 
 ---
 
@@ -99,6 +107,6 @@ npm run dev
 
 ## 🌿 Struktur Percabangan (Branching Model)
 
-- `main` ➔ Branch rilis stabil yang terkoneksi langsung dengan *deployment* Vercel.
+- `main` ➔ Branch rilis stabil yang terkoneksi langsung dengan *deployment* Vercel dan rilis *package* GHCR.
 - `dev` ➔ Branch utama integrasi pengembangan.
 - `feature/*` ➔ Branch pengerjaan fitur individual yang digabungkan ke `dev` melalui *Pull Request*.

@@ -1,31 +1,55 @@
-FROM php:8.3-cli
+# ==========================================
+# STAGE 1: BUILDER (Fase Membangun)
+# Tahap pertama boleh besar (menggunakan composer utuh)
+# ==========================================
+FROM composer:2.7 AS builder
+WORKDIR /app
 
-# Install dependensi sistem yang dibutuhkan Laravel dan ekstensi PHP
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    sqlite3 \
-    libsqlite3-dev \
-    && docker-php-ext-install pdo_mysql pdo_sqlite zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-# Set working directory
-WORKDIR /var/www
-
-# STRATEGI CACHING: Copy file composer DULU sebelum copy seluruh kode
+# Strategi Caching: Copy daftar dependensi terlebih dahulu
 COPY composer.json composer.lock ./
 
-# Install dependensi Laravel (mengabaikan skrip untuk mencegah error saat build awal)
-RUN composer install --no-scripts --no-interaction --prefer-dist
-# Setelah dependensi terinstall, baru copy seluruh kode aplikasi
+# Install dependensi (bisa ditambah --no-dev agar lebih kecil lagi)
+RUN composer install --no-interaction --prefer-dist --ignore-platform-reqs --no-scripts --optimize-autoloader
+
+# Copy sisa kodingan aplikasi
 COPY . .
-# Generate key (karena ini container dasar) dan jalankan optimasi
+
+# ==========================================
+# STAGE 2: PRODUCTION (Fase Menjalankan)
+# Tahap kedua super kecil menggunakan Alpine Linux
+# ==========================================
+FROM php:8.3-cli-alpine
+
+# Install ekstensi minimal yang dibutuhkan aplikasi
+RUN apk add --no-cache sqlite-dev \
+    && docker-php-ext-install pdo_mysql pdo_sqlite
+
+# Set folder kerja
+WORKDIR /var/www
+
+# Salin kodingan yang sudah matang dari tahap builder
+COPY --from=builder /app /var/www
+
+# Ganti kepemilikan file agar bisa dibaca/ditulis oleh user non-root
+RUN chown -R www-data:www-data /var/www
+
+# SYARAT TUGAS 4 & 5: Container tidak boleh berjalan sebagai root!
+USER www-data
+
+# Siapkan environment dan jalankan migrasi database (Sebagai www-data)
 RUN cp .env.example .env \
+    && touch database/database.sqlite \
     && php artisan key:generate \
-    && php artisan optimize:clear
-# Ekspos port yang akan digunakan oleh artisan serve
+    && php artisan migrate --force
+
+# Ekspos port
 EXPOSE 8000
-# Perintah yang dijalankan saat container menyala
+
+# SYARAT TUGAS 5: Healthcheck untuk memantau status aplikasi
+# Mengecek rute default /up bawaan Laravel 11 setiap 15 detik
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:8000/up || exit 1
+
+# Perintah menjalankan server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
